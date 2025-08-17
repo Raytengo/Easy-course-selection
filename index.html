@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>輕鬆選課趣</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="min-h-screen p-4 sm:p-6 lg:p-8 flex items-center justify-center">
+  <!-- 動態色塊層：僅作為視覺背景，不擋互動 -->
+  <div class="bg-blobs" aria-hidden="true">
+    <span class="blob b1"></span>
+    <span class="blob b2"></span>
+    <span class="blob b3"></span>
+  </div>
+  
+  <div class="max-w-screen-2xl mx-auto w-full relative z-10">
+    <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- 左側：課程列表 -->
+      <div class="lg:col-span-1">
+        <!-- 整塊翻頁容器（每一頁都是一張玻璃卡；讓圓角邊框一起動） -->
+        <div id="left-pager" class="left-pager h-[90vh]">
+          <div class="left-pager-inner">
+            <!-- Page 1：課程列表頁 -->
+            <section class="left-page">
+              <div class="glass-card p-5 h-full flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                  <h2 class="text-3xl font-bold text-slate-800">課程列表</h2>
+                  <div class="flex items-center gap-2">
+                    <button id="to-import-btn" class="w-9 h-9 rounded-full bg-white/40 hover:bg-white/60 grid place-items-center transition-all duration-150 hover:scale-105 active:scale-95" title="導入課程資料" aria-label="導入課程資料">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-slate-700"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+                    </button>
+                    <button class="toggle-all-btn text-sm bg-white/40 hover:bg-white/60 text-slate-700 font-semibold py-2 px-4 rounded-lg transition-all duration-150 hover:scale-105 active:scale-95">全部選取</button>
+                  </div>
+                </div>
+                <input id="search-box" type="text" placeholder="搜尋課程名稱或代號..." class="w-full bg-white/40 border border-white/50 rounded-lg px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-sky-300 placeholder-slate-500" />
+                <div id="course-list" class="space-y-3 flex-grow min-h-0 overflow-y-auto pr-2"></div>
+              </div>
+            </section>
+
+            <!-- Page 2：導入頁 -->
+            <section class="left-page">
+              <div class="glass-card p-6 h-full flex flex-col">
+                <!-- 頁面標題區 -->
+                <div class="flex justify-between items-center mb-6">
+                  <div class="flex items-center gap-3">
+                    
+                    <div>
+                      <h3 class="text-2xl font-semibold text-slate-800">課程資料分析</h3>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button id="back-to-list-btn" class="w-10 h-10 rounded-xl bg-white/50 hover:bg-white/70 backdrop-blur-sm grid place-items-center transition-all duration-150 hover:scale-105 active:scale-95" title="返回列表" aria-label="返回列表">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-slate-700"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                    </button>
+                    <button id="delete-all-btn" class="text-sm bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold py-2.5 px-4 rounded-xl transition-all duration-150 hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl">全部刪除</button>
+                  </div>
+                </div>
+
+                <!-- 上傳區域 -->
+                <div class="flex-grow flex flex-col gap-3 overflow-hidden">
+                  <!-- 文件上傳卡片 -->
+                  <div class="bg-white/30 backdrop-blur-sm rounded-2xl px-4 pt-4 pb-2 border border-white/40 hover:bg-white/40 transition-all duration-300 flex-shrink-0">
+                    <div class="flex items-center gap-3 mb-4">
+                      <div class="w-8 h-8 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-white">
+                          <path fill-rule="evenodd" d="M1.5 6a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 19.5 6v6a2.25 2.25 0 0 1-2.25 2.25H3.75A2.25 2.25 0 0 1 1.5 12V6ZM3 16.06V18a2.25 2.25 0 0 0 2.25 2.25h13.5A2.25 2.25 0 0 0 21 18v-1.94l-2.69-2.689a1.5 1.5 0 0 0-2.12 0l-.88.879.97.97a.75.75 0 1 1-1.06 1.06l-5.16-5.159a1.5 1.5 0 0 0-2.12 0L3 16.061Zm10.125-7.81a1.125 1.125 0 1 1 2.25 0 1.125 1.125 0 0 1-2.25 0Z" clip-rule="evenodd" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h4 class="font-semibold text-slate-800">上傳課表圖片</h4>
+                      </div>
+                    </div>
+                    
+                    <!-- 自定義文件上傳區 -->
+                    <div class="relative">
+                      <input type="file" id="import-image" accept="image/*" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+                      <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center bg-gradient-to-br from-slate-50/50 to-white/50 hover:border-blue-400 hover:bg-blue-50/30 transition-all duration-300 min-h-[200px] flex flex-col items-center justify-center">
+                        <div class="w-12 h-12 mx-auto mb-3 bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-7 h-7 text-blue-600">
+                            <path fill-rule="evenodd" d="M11.47 2.47a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06l-3.22-3.22V16.5a.75.75 0 0 1-1.5 0V4.81L8.03 8.03a.75.75 0 0 1-1.06-1.06l4.5-4.5ZM3 15.75a.75.75 0 0 1 .75.75v2.25A1.5 1.5 0 0 0 5.25 21h13.5a1.5 1.5 0 0 0 1.5-1.5V16.5a.75.75 0 0 1 1.5 0v2.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V16.5a.75.75 0 0 1 .75-.75Z" clip-rule="evenodd" />
+                          </svg>
+                        </div>
+                        <p class="text-base font-semibold text-slate-700 mb-1">選擇檔案</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 圖片預覽和狀態區域 -->
+                  <div class="flex-grow min-h-0 flex flex-col gap-4">
+                    <!-- 圖片預覽 -->
+                    <div id="image-preview" class=""></div>
+                    <!-- OCR 狀態 -->
+                    <div id="ocr-status" class="text-center text-sm font-medium px-4 py-2 rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 text-slate-700 border border-blue-200/50 shadow-sm"></div>
+                  </div>
+
+                  <!-- 導入按鈕 -->
+                  <div class="flex-shrink-0 pt-6 mt-auto">
+                    <button onclick="handleImportSubmit()" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 hover:scale-[1.02] shadow-lg hover:shadow-xl disabled:cursor-not-allowed disabled:hover:scale-100" id="import-btn">
+                      <span class="flex items-center justify-center gap-2">
+                        匯入課程
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右側：一週課表 -->
+      <div class="lg:col-span-2">
+        <div class="glass-card p-5 h-[90vh] flex flex-col">
+          <div id="timetable" class="grid grid-cols-[auto_repeat(5,1fr)] text-xs text-center select-none flex-grow">
+            <!-- 課表頭部 (星期) -->
+            <div class="timetable-header time py-2"></div>
+            <div class="timetable-header font-semibold py-2 text-xl">星期一</div>
+            <div class="timetable-header font-semibold py-2 text-xl">星期二</div>
+            <div class="timetable-header font-semibold py-2 text-xl">星期三</div>
+            <div class="timetable-header font-semibold py-2 text-xl">星期四</div>
+            <div class="timetable-header font-semibold py-2 text-xl">星期五</div>
+            <!-- 時間標籤欄與每日欄由 JS 動態產生 -->
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 載入 JavaScript 模組 -->
+  <script src="ocr-processor.js"></script>
+  <script src="ui-manager.js"></script>
+  
+  <script>
+    // 初始化應用程式
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 初始化課程管理器
+      window.courseManager = new CourseManager();
+      await window.courseManager.init();
+      
+      // 初始化 OCR 處理器
+      window.ocrProcessor.init();
+      
+      // 初始化 UI 管理器
+      window.uiManager = new UIManager();
+      window.uiManager.init();
+    });
+  </script>
+</body>
+</html>

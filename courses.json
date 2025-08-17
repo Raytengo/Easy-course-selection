@@ -1,0 +1,25 @@
+// U can use this JSON file to see how it will work without input any picture
+// These are default courses to display, so if u want to use ur own course, just leave it alone.
+
+
+// {
+//   "courses": [
+//     { "id": "AIAA2290-L01", "code": "AIAA 2290", "name": "Ethics, Privacy and Security in AI", "section": "L01", "instructor": "HU, Xuming", "times": [{ "day": "Fr", "start": "09:00", "end": "11:50" }], "color": "hsla(195, 80%, 80%, 0.8)" },
+//     { "id": "AIAA2290-L02", "code": "AIAA 2290", "name": "Ethics, Privacy and Security in AI", "section": "L02", "instructor": "HU, Xuming", "times": [{ "day": "Fr", "start": "13:30", "end": "16:20" }], "color": "hsla(195, 80%, 80%, 0.8)" },
+//     { "id": "AIAA3102-L01", "code": "AIAA 3102", "name": "Python Programming for AI", "section": "L01", "instructor": "QIN, Chengwei", "times": [{ "day": "Th", "start": "09:00", "end": "11:50" }], "color": "hsla(145, 60%, 80%, 0.8)" },
+//     { "id": "AIAA3102-L02", "code": "AIAA 3102", "name": "Python Programming for AI", "section": "L02", "instructor": "SHU, Yao", "times": [{ "day": "Tu", "start": "09:00", "end": "11:50" }], "color": "hsla(145, 60%, 80%, 0.8)" },
+//     { "id": "AIAA3111-L01", "code": "AIAA 3111", "name": "Introduction to Data Mining", "section": "L01", "instructor": "CHEN, Jintai", "times": [{ "day": "Mo", "start": "18:00", "end": "20:50" }], "color": "hsla(45, 80%, 80%, 0.8)" },
+//     { "id": "AIAA3111-L02", "code": "AIAA 3111", "name": "Introduction to Data Mining", "section": "L02", "instructor": "LIU, Hao", "times": [{ "day": "We", "start": "18:00", "end": "20:50" }], "color": "hsla(45, 80%, 80%, 0.8)" },
+//     { "id": "AIAA3225-L01", "code": "AIAA 3225", "name": "Learning & Optimization for AI", "section": "L01", "instructor": "GONG, Zijun", "times": [{ "day": "Th", "start": "15:00", "end": "17:50" }], "color": "hsla(260, 80%, 85%, 0.8)" },
+//     { "id": "AIAA3225-L02", "code": "AIAA 3225", "name": "Learning & Optimization for AI", "section": "L02", "instructor": "GONG, Zijun", "times": [{ "day": "Tu", "start": "18:00", "end": "20:50" }], "color": "hsla(260, 80%, 85%, 0.8)" },
+//     { "id": "DLED3020-L01", "code": "DLED 3020", "name": "English Communication I", "section": "L01", "instructor": "TBA", "times": [{ "day": "Mo", "start": "10:30", "end": "11:50" }, { "day": "We", "start": "10:30", "end": "11:50" }], "color": "hsla(340, 80%, 85%, 0.8)" },
+//     { "id": "DLED3020-L02", "code": "DLED 3020", "name": "English Communication I", "section": "L02", "instructor": "TBA", "times": [{ "day": "Tu", "start": "10:30", "end": "11:50" }, { "day": "Th", "start": "10:30", "end": "11:50" }], "color": "hsla(340, 80%, 85%, 0.8)" },
+//     { "id": "DLED3020-L03", "code": "DLED 3020", "name": "English Communication I", "section": "L03", "instructor": "TBA", "times": [{ "day": "Tu", "start": "13:30", "end": "14:50" }, { "day": "Th", "start": "13:30", "end": "14:50" }], "color": "hsla(340, 80%, 85%, 0.8)" },
+//     { "id": "DLED3020-L04", "code": "DLED 3020", "name": "English Communication I", "section": "L04", "instructor": "TBA", "times": [{ "day": "Mo", "start": "16:30", "end": "17:50" }, { "day": "We", "start": "16:30", "end": "17:50" }], "color": "hsla(340, 80%, 85%, 0.8)" },
+//     { "id": "DSAA2011-L01", "code": "DSAA 2011", "name": "Machine Learning", "section": "L01", "instructor": "ZHONG, Zixin", "times": [{ "day": "Mo", "start": "18:00", "end": "20:50" }], "color": "hsla(180, 70%, 80%, 0.8)" },
+//     { "id": "DSAA2011-LA01", "code": "DSAA 2011", "name": "Machine Learning Lab", "section": "LA01", "instructor": "ZHONG, Zixin", "times": [{ "day": "Th", "start": "19:30", "end": "20:20" }], "color": "hsla(180, 70%, 75%, 0.8)" },
+//     { "id": "DSAA2012-L01", "code": "DSAA 2012", "name": "Deep Learning", "section": "L01", "instructor": "GUO, Zhijiang", "times": [{ "day": "Mo", "start": "16:30", "end": "17:50" }, { "day": "We", "start": "16:30", "end": "17:50" }], "color": "hsla(280, 70%, 85%, 0.8)" },
+//     { "id": "DSAA2012-LA01", "code": "DSAA 2012", "name": "Deep Learning Lab", "section": "LA01", "instructor": "GUO, Zhijiang", "times": [{ "day": "Fr", "start": "16:30", "end": "17:20" }], "color": "hsla(280, 70%, 80%, 0.8)" }
+//   ]
+// }
+

@@ -1,0 +1,439 @@
+:root {
+  --grid-line: rgba(255, 255, 255, 0.5);
+  --grid-line-weak: rgba(255, 255, 255, 0.25);
+  --separator: rgba(255, 255, 255, 0.7);
+}
+
+html, body { 
+  height: 100%; 
+}
+
+body {
+  font-family: 'Inter', 'Noto Sans TC', sans-serif;
+  color: #334155;
+  background:
+    radial-gradient(1200px 700px at 20% 10%, rgba(255, 214, 170, 0.6), transparent 60%),
+    radial-gradient(1000px 600px at 80% 20%, rgba(255, 170, 200, 0.5), transparent 60%),
+    radial-gradient(1200px 800px at 30% 80%, rgba(210, 190, 255, 0.6), transparent 60%),
+    linear-gradient(135deg, rgb(255, 240, 230), rgb(220, 230, 255));
+  background-attachment: fixed;
+  min-height: 100%;
+}
+
+/* 顆粒層（已做 URL 編碼，避免語法錯誤） */
+body::before {
+  content: "";
+  position: fixed; 
+  inset: 0; 
+  pointer-events: none; 
+  opacity: .06;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22160%22 height=%22160%22 viewBox=%220%200%20160%20160%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%224%22 stitchTiles=%22stitch%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>');
+}
+
+/* 讓 header 佔第一列，自動高度；下方主體填滿剩餘空間 */
+#timetable { 
+  grid-template-rows: auto 1fr; 
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(20px); 
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 1.5rem; 
+  box-shadow: 0 8px 40px rgba(0,0,0,.1);
+  transition: all .3s ease;
+}
+
+.glass-card:hover { 
+  background: rgba(255,255,255,.5); 
+  box-shadow: 0 12px 40px rgba(0,0,0,.15); 
+}
+
+::-webkit-scrollbar{ 
+  width:8px 
+} 
+
+::-webkit-scrollbar-track{ 
+  background:rgba(0,0,0,.05); 
+  border-radius:10px 
+} 
+
+::-webkit-scrollbar-thumb{ 
+  background:rgba(0,0,0,.2); 
+  border-radius:10px 
+} 
+
+::-webkit-scrollbar-thumb:hover{ 
+  background:rgba(0,0,0,.4) 
+}
+
+.timetable-slot { 
+  border-bottom: 1px solid var(--grid-line); 
+}
+
+.timetable-header { 
+  border-bottom: 1px solid var(--grid-line); 
+}
+
+/* 移除左側時間欄上方那條凸出的白線（只在星期欄位畫 08:00 線） */
+#timetable > .timetable-header.time { 
+  border-bottom: none; 
+}
+
+.time-label-col { 
+  border-right: 1px solid var(--separator); 
+}
+
+.day-col { 
+  border-right: 1px solid var(--grid-line); 
+  position: relative; 
+}
+
+.time-label {
+  display: flex; 
+  align-items: flex-start; 
+  justify-content: flex-end;
+  padding-top: 0; 
+  margin: 0; 
+  line-height: 1; 
+  transform: translateY(-1px);
+}
+
+.course-block { 
+  position: absolute; 
+  border-radius: .5rem; 
+  padding: 2px 6px; 
+  font-size: .7rem; 
+  overflow: hidden; 
+  transition: box-shadow .2s ease, transform .1s ease; 
+  z-index: 10; 
+  color: #1e293b; 
+  border: 1px solid rgba(255,255,255,.5); 
+  cursor: pointer; 
+}
+
+.course-block.is-focused { 
+  outline: 2px dashed rgba(56,189,248,.8); 
+  box-shadow: 0 8px 24px rgba(56,189,248,.25); 
+}
+
+/* 右側：滑鼠移入即顯示藍色提示（不改變聚焦狀態），拖出紅框優先 */
+.course-block:hover:not(.drag-out) { 
+  outline: 2px dashed rgba(56,189,248,.8); 
+  box-shadow: 0 8px 24px rgba(56,189,248,.25); 
+}
+
+.course-block.dragging { 
+  cursor: grabbing; 
+  z-index: 50; 
+  transition: none; 
+}
+
+.course-block.drag-out { 
+  outline: 2px dashed rgba(244,63,94,.95) !important; 
+  box-shadow: 0 8px 24px rgba(244,63,94,.35) !important; 
+}
+
+/* 左側課程卡片的聚焦效果：使用 CSS 變數控制顏色（與右側 color 同步） */
+.course-card { 
+  position: relative; 
+  border-left-width: 4px; 
+  border-left-style: solid; 
+  border-left-color: var(--card-hl-faint, rgba(255,255,255,0.5)); 
+}
+
+.course-focus { 
+  box-shadow: 0 0 0 2px var(--card-hl, rgba(56,189,248,.65)); 
+  border-left-color: var(--card-hl, #38bdf8) !important; 
+}
+
+.course-card.course-focus:hover { 
+  box-shadow: 0 0 0 2px var(--card-hl, rgba(56,189,248,.75)); 
+  border-left-color: var(--card-hl, #38bdf8) !important; 
+}
+
+/* === Select button icons (check ↔ X on hover) === */
+.add-btn .icon { 
+  display: inline-block; 
+  vertical-align: middle; 
+}
+
+.add-btn .icon-x { 
+  display: none; 
+}
+
+/* 未選取：預設顯示 +，hover 顯示綠色 ✔ */
+.add-btn[data-selected="false"] .icon-plus { 
+  display: inline-block; 
+}
+
+.add-btn[data-selected="false"] .icon-check { 
+  display: none; 
+}
+
+.add-btn[data-selected="false"]:hover .icon-plus { 
+  display: none; 
+}
+
+.add-btn[data-selected="false"]:hover .icon-check { 
+  display: inline-block; 
+  color: #10b981; 
+}
+
+.add-btn[data-selected="false"]:hover { 
+  background: rgba(16, 185, 129, 0.12); 
+}
+
+/* 已選取：預設顯示白色 ✔，hover 顯示紅色 ✖ 提示可取消 */
+.add-btn[data-selected="true"] .icon-plus { 
+  display: none; 
+}
+
+.add-btn[data-selected="true"] .icon-check { 
+  display: inline-block; 
+  color: #ffffff; 
+}
+
+.add-btn[data-selected="true"]:hover .icon-check { 
+  display: none; 
+}
+
+.add-btn[data-selected="true"]:hover .icon-x { 
+  display: inline-block; 
+}
+
+.add-btn[data-selected="true"]:hover { 
+  background: rgba(244, 63, 94, 0.12) !important; 
+}
+
+/* 固定為正圓，避免因為內距/字型造成橢圓錯覺 */
+.add-btn { 
+  width: 36px; 
+  height: 36px; 
+  padding: 0; 
+  display: grid; 
+  place-items: center; 
+  border-radius: 9999px; 
+  flex-shrink: 0; 
+}
+
+.add-btn svg { 
+  width: 20px; 
+  height: 20px; 
+  display: block; 
+}
+
+/* 動態背景色塊（飄浮的柔光色團） */
+.bg-blobs{ 
+  position:fixed; 
+  inset:0; 
+  pointer-events:none; 
+  z-index:0; 
+}
+
+.blob{ 
+  position:absolute; 
+  width:46vmax; 
+  height:46vmax; 
+  border-radius:50%; 
+  filter:blur(70px); 
+  opacity:.35; 
+  will-change:transform; 
+}
+
+.blob.b1{ 
+  background:radial-gradient(closest-side, rgba(255,214,170,.8), rgba(255,214,170,0) 70%); 
+  left:-10vmax; 
+  top:-6vmax; 
+  animation:float1 28s ease-in-out infinite alternate; 
+}
+
+.blob.b2{ 
+  background:radial-gradient(closest-side, rgba(255,170,200,.7), rgba(255,170,200,0) 70%); 
+  right:-12vmax; 
+  top:-4vmax; 
+  animation:float2 32s ease-in-out infinite alternate; 
+}
+
+.blob.b3{ 
+  background:radial-gradient(closest-side, rgba(210,190,255,.85), rgba(210,190,255,0) 70%); 
+  left:-8vmax; 
+  bottom:-10vmax; 
+  animation:float3 36s ease-in-out infinite alternate; 
+}
+
+@keyframes float1{
+  0%{transform:translate(-4vw,-2vh) scale(1)}
+  100%{transform:translate(12vw,8vh) scale(1.08)}
+}
+
+@keyframes float2{
+  0%{transform:translate(3vw,-3vh) scale(1)}
+  100%{transform:translate(-10vw,6vh) scale(1.05)}
+}
+
+@keyframes float3{
+  0%{transform:translate(-2vw,3vh) scale(1)}
+  100%{transform:translate(8vw,-6vh) scale(1.1)}
+}
+
+@media (prefers-reduced-motion: reduce){ 
+  .blob{ 
+    animation:none 
+  } 
+}
+
+/* 左側整塊翻頁（App Switcher 感）：整張圓角玻璃卡切換 */
+.left-pager{
+  position:relative; 
+  overflow:hidden; 
+  height:100%; 
+  perspective:900px; 
+  --dur:.45s; 
+  --ease:cubic-bezier(.22,1,.36,1);
+} 
+
+.left-pager-inner{
+  display:flex; 
+  width:200%; 
+  height:100%; 
+  transform:translateX(0%); 
+  transition:transform var(--dur) var(--ease);
+} 
+
+.left-pager.is-import .left-pager-inner{
+  transform:translateX(-50%);
+} 
+
+/* 移除翻頁時四角陰影（不需要卡片投影） */
+.left-page{
+  min-width:50%; 
+  height:100%; 
+  display:flex;
+}
+
+.left-page > .glass-card{
+  height:100%; 
+  width:100%; 
+  box-shadow:none !important; 
+  will-change:transform,opacity,filter; 
+  transform-origin:center center; 
+  transition:transform var(--dur) var(--ease), opacity var(--dur) var(--ease), filter var(--dur) var(--ease);
+} 
+
+.left-page > .glass-card:hover{
+  box-shadow:none !important;
+}
+
+/* 背景遮罩取消，避免四角發灰 */
+.left-pager::after{
+  content:""; 
+  position:absolute; 
+  inset:0; 
+  opacity:0 !important; 
+  pointer-events:none;
+}
+
+/* 預設：列表頁在前；導入頁在右側作預覽（較小、略傾斜、淡化） */
+.left-pager:not(.is-import) .left-page:nth-child(1) > .glass-card{
+  transform:none; 
+  opacity:1; 
+  filter:none;
+} 
+
+.left-pager:not(.is-import) .left-page:nth-child(2) > .glass-card{
+  transform:translateX(6%) scale(.96) rotateY(8deg); 
+  opacity:.6; 
+  filter:blur(0.5px);
+} 
+
+/* 進入導入頁：列表頁退後（縮小+傾斜+淡化）；導入頁回到正視角且不偏移 */
+.left-pager.is-import .left-page:nth-child(1) > .glass-card{
+  transform:translateX(-6%) scale(.9) rotateY(-8deg); 
+  opacity:.6; 
+  filter:blur(0.5px);
+} 
+
+.left-pager.is-import .left-page:nth-child(2) > .glass-card{
+  transform:none; 
+  opacity:1; 
+  filter:none;
+}
+
+/* 導入頁面專用樣式 */
+.upload-card {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.upload-card:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* 文件拖放區域 */
+.file-drop-zone {
+  position: relative;
+  overflow: hidden;
+}
+
+.file-drop-zone::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(59, 130, 246, 0.1) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.file-drop-zone:hover::before {
+  transform: translateX(100%);
+}
+
+/* 按鈕漸變動畫 */
+.gradient-btn {
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 圖標容器動畫 */
+.icon-container {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.icon-container:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* 狀態指示器 */
+.status-indicator {
+  position: relative;
+  overflow: hidden;
+}
+
+.status-indicator::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
