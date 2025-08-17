@@ -23,20 +23,20 @@
 ##  使用  
 
 ### 1. 準備課程表  
-將課程表 (PDF/圖片) 輸入到 OCR 系統。  
-![image](https://github.com/Raytengo/Easy-course-selection/blob/main/pic/input_example.png)
+將課程表 (PDF/截圖) 輸入到系統。  
+<img src="https://github.com/Raytengo/Easy-course-selection/blob/main/pic/input_example.png" alt="image" width="400"/>
 
-### 2. 左側可以滑動並添加欲選課程
-
-### 3. 右側可以拖動課程移除不需要的課程
+### 2. 左側可以滑動並添加欲選課程，右側可以拖動課程移除不需要的課程
+已經是防呆介面了,這個還不會用請檢討自己是否適合讀大學
 
 ---
 
 ## 註解
 如果輸入的圖片排版跟示範不同,可能會導致辨識有問題,導致卡片生成錯誤  
 可以參考json檔案裡面的資料格式,先將你的課程丟給llm,生成相對應的資料格式並替換掉原本的json內容即可  
-其實可以將ocr替換成llm,並讓他生成對應的資料,這會是比較通用且穩定的方法  
-但是我不想花api的錢
+其實可以將ocr替換成llm,並讓他生成對應的資料,這會是比較通用且穩定的方法。但是我不想花api的錢
+
+此外部分代碼為ai生成，如果發現代碼有問題那你是對的
 
 
 
