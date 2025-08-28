@@ -31,6 +31,35 @@
 
 ---
 
+## Web Scraper
+
+This project includes a web scraper to fetch course data directly from the university website.
+
+### Setup
+
+1.  **Install Python and Pip:** Make sure you have Python 3 and pip installed.
+2.  **Install Dependencies:** Install the required Python libraries using pip:
+    ```bash
+    pip install playwright beautifulsoup4 lxml
+    ```
+3.  **Install Playwright Browsers:** Install the necessary browser binaries for Playwright:
+    ```bash
+    python -m playwright install --with-deps
+    ```
+4.  **Set Environment Variables:** You need to set your university account credentials as environment variables.
+    ```bash
+    export HKUST_USERNAME="your_username"
+    export HKUST_PASSWORD="your_password"
+    ```
+
+### Running the Scraper
+
+Once the setup is complete, you can run the scraper:
+```bash
+python scraper.py
+```
+The script will log in, scrape the course data for the AIAA subject, and update the `courses.json` file.
+
 ## 註解
 如果輸入的圖片排版跟示範不同,可能會導致辨識有問題,導致卡片生成錯誤  
 可以參考json檔案裡面的資料格式,先將你的課程丟給llm,生成相對應的資料格式並替換掉原本的json內容即可  
